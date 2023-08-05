@@ -47,7 +47,7 @@ clInt_AlS = Lx_AlS/NInt_AlS;
 clExt_AlS = Lx_AlS/NExt_AlS;
 clFSI_AlS = clInt_AlS-Ly_AlF*(clInt_AlS-clExt_AlS)/Ly_AlS;
 // Al-middle (fluid)
-cl_AlF = 0.8;
+cl_AlF = 1.2;
 // Fe-top
 NInt_FeTop = 80;
 NExt_FeTop = 50;

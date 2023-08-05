@@ -1,3 +1,25 @@
+# -*- coding: utf-8 -*-
+
+# - 3D complet model
+# - rigid tool: cone without rotation
+# - material type: TmElastHypoMaterial/TmEvpIsoHHypoMaterial
+# - hardening type for stainless steel: KrupkowskyIsotropicHardening
+# - hardening type for AA1050: SaturatedIsotropicHardening
+# - contact type: positively unilateral
+# - contact law:  Frictionless & TmCoulomb
+# - method used to compute the stiffness matrix: STIFF_ANALYTIC
+# - method used to integrate the Cauchy stresses: VES_CMVIM_SRIPR
+# - method to take into account the contact surface: AIC_ONCE
+# - setSinglePass: True for Defo-Defo contact interactions
+#(double pass: artefact in contact force computation if different mesh size between master and slave)
+#(double pass: to be verified but seems heat flux will be counted twice)
+# - N-R residual computation: mechanical-Method4; thermal-Method3
+# - time integration scheme": staggered; mechanical-(Damped)AlphaGeneralized; thermal-Trapezoidal
+# - solver: DSS
+
+# importation modules
+from wrap import *
+
 import toolbox.gmsh as gmsh
 import wrap as w
 import numpy as np
