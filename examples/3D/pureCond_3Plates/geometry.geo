@@ -1,12 +1,15 @@
 // parameters
-Geometry.AutoCoherence = 0;  // keep duplicate elementary entities
+Geometry.AutoCoherence = 0;	// keep duplicate elementary entities
 // geometry in [mm]
 gExten = 0.;
-gxFSI = 20.;
+gX0_RT = 20.;
+// rigid tool
+rExt_RT = 10.;			// radius of the rigid tool
 // Fe-top
 Lx_FeTop  = 110.;
 Ly_FeTop  = 80.;
-Ly1_FeTop = 20.;
+facLy1_FeTop = 1.0;		// factor for the Ly1 length
+Ly1_FeTop = 2*rExt_RT*facLy1_FeTop;
 Lz_FeTop  = 1.5;
 // Al-middle (solid)
 Lx_AlS = Lx_FeTop+gExten;
@@ -77,12 +80,12 @@ Point(1004) = {X0+Lx_FeBot/2, Y0,            Z0_FeBot, clInt_FeBot};
 Point(1005) = {X0-Lx_FeBot/2, Y0+Ly_FeBot/2, Z0_FeBot, clExt_FeBot};
 Point(1006) = {X0+Lx_FeBot/2, Y0+Ly_FeBot/2, Z0_FeBot, clExt_FeBot};
 
-Point(1007) = {X0-Lx_FeBot/2+gxFSI,        Y0-Ly_AlF/2, Z0_FeBot, clFSI_FeBot};
-Point(1008) = {X0-Lx_FeBot/2+gxFSI+Lx_AlF, Y0-Ly_AlF/2, Z0_FeBot, clFSI_FeBot};
-Point(1009) = {X0-Lx_FeBot/2+gxFSI,        Y0,          Z0_FeBot, clInt_FeBot};
-Point(1010) = {X0-Lx_FeBot/2+gxFSI+Lx_AlF, Y0,          Z0_FeBot, clInt_FeBot};
-Point(1011) = {X0-Lx_FeBot/2+gxFSI,        Y0+Ly_AlF/2, Z0_FeBot, clFSI_FeBot};
-Point(1012) = {X0-Lx_FeBot/2+gxFSI+Lx_AlF, Y0+Ly_AlF/2, Z0_FeBot, clFSI_FeBot};
+Point(1007) = {X0-Lx_FeBot/2+gX0_RT,        Y0-Ly_AlF/2, Z0_FeBot, clFSI_FeBot};
+Point(1008) = {X0-Lx_FeBot/2+gX0_RT+Lx_AlF, Y0-Ly_AlF/2, Z0_FeBot, clFSI_FeBot};
+Point(1009) = {X0-Lx_FeBot/2+gX0_RT,        Y0,          Z0_FeBot, clInt_FeBot};
+Point(1010) = {X0-Lx_FeBot/2+gX0_RT+Lx_AlF, Y0,          Z0_FeBot, clInt_FeBot};
+Point(1011) = {X0-Lx_FeBot/2+gX0_RT,        Y0+Ly_AlF/2, Z0_FeBot, clFSI_FeBot};
+Point(1012) = {X0-Lx_FeBot/2+gX0_RT+Lx_AlF, Y0+Ly_AlF/2, Z0_FeBot, clFSI_FeBot};
 
 // lines
 Line(1001) = {1001, 1002};
@@ -147,12 +150,12 @@ Point(2004) = {X0+Lx_AlS/2, Y0,          Z0_AlS, clInt_AlS};
 Point(2005) = {X0-Lx_AlS/2, Y0+Ly_AlS/2, Z0_AlS, clExt_AlS};
 Point(2006) = {X0+Lx_AlS/2, Y0+Ly_AlS/2, Z0_AlS, clExt_AlS};
 
-Point(2007) = {X0-Lx_AlS/2+gxFSI,        Y0-Ly_AlF/2, Z0_AlS, clFSI_AlS};
-Point(2008) = {X0-Lx_AlS/2+gxFSI+Lx_AlF, Y0-Ly_AlF/2, Z0_AlS, clFSI_AlS};
-Point(2009) = {X0-Lx_AlS/2+gxFSI,        Y0,          Z0_AlS, clInt_AlS};
-Point(2010) = {X0-Lx_AlS/2+gxFSI+Lx_AlF, Y0,          Z0_AlS, clInt_AlS};
-Point(2011) = {X0-Lx_AlS/2+gxFSI,        Y0+Ly_AlF/2, Z0_AlS, clFSI_AlS};
-Point(2012) = {X0-Lx_AlS/2+gxFSI+Lx_AlF, Y0+Ly_AlF/2, Z0_AlS, clFSI_AlS};
+Point(2007) = {X0-Lx_AlS/2+gX0_RT,        Y0-Ly_AlF/2, Z0_AlS, clFSI_AlS};
+Point(2008) = {X0-Lx_AlS/2+gX0_RT+Lx_AlF, Y0-Ly_AlF/2, Z0_AlS, clFSI_AlS};
+Point(2009) = {X0-Lx_AlS/2+gX0_RT,        Y0,          Z0_AlS, clInt_AlS};
+Point(2010) = {X0-Lx_AlS/2+gX0_RT+Lx_AlF, Y0,          Z0_AlS, clInt_AlS};
+Point(2011) = {X0-Lx_AlS/2+gX0_RT,        Y0+Ly_AlF/2, Z0_AlS, clFSI_AlS};
+Point(2012) = {X0-Lx_AlS/2+gX0_RT+Lx_AlF, Y0+Ly_AlF/2, Z0_AlS, clFSI_AlS};
 
 // lines
 Line(2001) = {2001, 2002};
@@ -194,14 +197,14 @@ AlS_2[] = Extrude {0., 0., Lz_AlS} {
 
 // Al-middle (fluid)
 // points
-Point(3001) = {X0-Lx_AlS/2+gxFSI,        Y0-Ly_AlF/2, Z0_AlF,        cl_AlF};
-Point(3002) = {X0-Lx_AlS/2+gxFSI+Lx_AlF, Y0-Ly_AlF/2, Z0_AlF,        cl_AlF};
-Point(3003) = {X0-Lx_AlS/2+gxFSI+Lx_AlF, Y0+Ly_AlF/2, Z0_AlF,        cl_AlF};
-Point(3004) = {X0-Lx_AlS/2+gxFSI,        Y0+Ly_AlF/2, Z0_AlF,        cl_AlF};
-Point(3005) = {X0-Lx_AlS/2+gxFSI,        Y0-Ly_AlF/2, Z0_AlF+Lz_AlF, cl_AlF};
-Point(3006) = {X0-Lx_AlS/2+gxFSI+Lx_AlF, Y0-Ly_AlF/2, Z0_AlF+Lz_AlF, cl_AlF};
-Point(3007) = {X0-Lx_AlS/2+gxFSI+Lx_AlF, Y0+Ly_AlF/2, Z0_AlF+Lz_AlF, cl_AlF};
-Point(3008) = {X0-Lx_AlS/2+gxFSI,        Y0+Ly_AlF/2, Z0_AlF+Lz_AlF, cl_AlF};
+Point(3001) = {X0-Lx_AlS/2+gX0_RT,        Y0-Ly_AlF/2, Z0_AlF,        cl_AlF};
+Point(3002) = {X0-Lx_AlS/2+gX0_RT+Lx_AlF, Y0-Ly_AlF/2, Z0_AlF,        cl_AlF};
+Point(3003) = {X0-Lx_AlS/2+gX0_RT+Lx_AlF, Y0+Ly_AlF/2, Z0_AlF,        cl_AlF};
+Point(3004) = {X0-Lx_AlS/2+gX0_RT,        Y0+Ly_AlF/2, Z0_AlF,        cl_AlF};
+Point(3005) = {X0-Lx_AlS/2+gX0_RT,        Y0-Ly_AlF/2, Z0_AlF+Lz_AlF, cl_AlF};
+Point(3006) = {X0-Lx_AlS/2+gX0_RT+Lx_AlF, Y0-Ly_AlF/2, Z0_AlF+Lz_AlF, cl_AlF};
+Point(3007) = {X0-Lx_AlS/2+gX0_RT+Lx_AlF, Y0+Ly_AlF/2, Z0_AlF+Lz_AlF, cl_AlF};
+Point(3008) = {X0-Lx_AlS/2+gX0_RT,        Y0+Ly_AlF/2, Z0_AlF+Lz_AlF, cl_AlF};
 
 // lines
 Line(3001) = {3001, 3002};
@@ -251,14 +254,14 @@ Point(4006) = {X0+Lx_FeTop/2, Y0+Ly1_FeTop/2, Z0_FeTop, clInt_FeTop};
 Point(4007) = {X0-Lx_FeTop/2, Y0+Ly_FeTop/2,  Z0_FeTop, clExt_FeTop};
 Point(4008) = {X0+Lx_FeTop/2, Y0+Ly_FeTop/2,  Z0_FeTop, clExt_FeTop};
 
-Point(4009) = {X0-Lx_FeTop/2+gxFSI,        Y0-Ly_AlF/2,    Z0_FeTop, clFSI_FeTop};
-Point(4010) = {X0-Lx_FeTop/2+gxFSI+Lx_AlF, Y0-Ly_AlF/2,    Z0_FeTop, clFSI_FeTop};
-Point(4011) = {X0-Lx_FeTop/2+gxFSI,        Y0-Ly1_FeTop/2, Z0_FeTop, clInt_FeTop};
-Point(4012) = {X0-Lx_FeTop/2+gxFSI+Lx_AlF, Y0-Ly1_FeTop/2, Z0_FeTop, clInt_FeTop};
-Point(4013) = {X0-Lx_FeTop/2+gxFSI,        Y0+Ly1_FeTop/2, Z0_FeTop, clInt_FeTop};
-Point(4014) = {X0-Lx_FeTop/2+gxFSI+Lx_AlF, Y0+Ly1_FeTop/2, Z0_FeTop, clInt_FeTop};
-Point(4015) = {X0-Lx_FeTop/2+gxFSI,        Y0+Ly_AlF/2,    Z0_FeTop, clFSI_FeTop};
-Point(4016) = {X0-Lx_FeTop/2+gxFSI+Lx_AlF, Y0+Ly_AlF/2,    Z0_FeTop, clFSI_FeTop};
+Point(4009) = {X0-Lx_FeTop/2+gX0_RT,        Y0-Ly_AlF/2,    Z0_FeTop, clFSI_FeTop};
+Point(4010) = {X0-Lx_FeTop/2+gX0_RT+Lx_AlF, Y0-Ly_AlF/2,    Z0_FeTop, clFSI_FeTop};
+Point(4011) = {X0-Lx_FeTop/2+gX0_RT,        Y0-Ly1_FeTop/2, Z0_FeTop, clInt_FeTop};
+Point(4012) = {X0-Lx_FeTop/2+gX0_RT+Lx_AlF, Y0-Ly1_FeTop/2, Z0_FeTop, clInt_FeTop};
+Point(4013) = {X0-Lx_FeTop/2+gX0_RT,        Y0+Ly1_FeTop/2, Z0_FeTop, clInt_FeTop};
+Point(4014) = {X0-Lx_FeTop/2+gX0_RT+Lx_AlF, Y0+Ly1_FeTop/2, Z0_FeTop, clInt_FeTop};
+Point(4015) = {X0-Lx_FeTop/2+gX0_RT,        Y0+Ly_AlF/2,    Z0_FeTop, clFSI_FeTop};
+Point(4016) = {X0-Lx_FeTop/2+gX0_RT+Lx_AlF, Y0+Ly_AlF/2,    Z0_FeTop, clFSI_FeTop};
 
 // lines
 Line(4001) = {4001, 4002};
