@@ -9,15 +9,15 @@
 # Path to the external library
 
 export PYTHONPATH=${PWD}:${PYTHONPATH}
-export PYTHONPATH=${PWD}/../Metafor/oo_meta:${PYTHONPATH}
-export PYTHONPATH=${PWD}/../Metafor/oo_metaB/bin:${PYTHONPATH}
+export PYTHONPATH=${PWD}/../Metafor_dev/oo_meta:${PYTHONPATH}
+export PYTHONPATH=${PWD}/../Metafor_dev/MetaBin/bin:${PYTHONPATH}
 export PYTHONPATH=${PWD}/../PFEM3D/build/bin:${PYTHONPATH}
 
 # Path to the Python script
 
 # export SCRIPT=${PWD}/examples/2D/carsherWall/main.py
 # export SCRIPT=${PWD}/examples/2D/coolingDisk/main.py
-export SCRIPT=${PWD}/examples/2D/damBreak/main.py
+# export SCRIPT=${PWD}/examples/2D/damBreak/main.py
 # export SCRIPT=${PWD}/examples/2D/elasticFunnel/main.py
 # export SCRIPT=${PWD}/examples/2D/flowContact/main.py
 # export SCRIPT=${PWD}/examples/2D/hydroStatic/main.py
@@ -31,6 +31,9 @@ export SCRIPT=${PWD}/examples/2D/damBreak/main.py
 # export SCRIPT=${PWD}/examples/3D/crossFlow/main.py
 # export SCRIPT=${PWD}/examples/3D/damBreak/main.py
 # export SCRIPT=${PWD}/examples/3D/hydroStatic/main.py
+
+#export SCRIPT=${PWD}/examples/3D/pureCond_3Plates/main.py
+export SCRIPT=${PWD}/examples/3D/alfeweld_1Plate/main.py
 
 # Clean output folder
 
