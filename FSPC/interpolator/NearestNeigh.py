@@ -1,30 +1,42 @@
 from .Interpolator import Interpolator
 from ..general import Toolbox as tb
+from scipy import sparse as sp
 import numpy as np
 
-# %% Mesh Interpolation with K-Nearest Neighbours
+# %% Mesh Interpolation K-Nearest Neighbours
 
 class KNN(Interpolator):
     def __init__(self,K):
-        Interpolator.__init__(self)
-
-        # Compute the FS mesh interpolation matrix
-
         self.K = int(abs(K))
+
+    # Compute the FS mesh interpolation matrix
+
+    def initialize(self):
+
+        Interpolator.__init__(self)
         position = tb.solver.getPosition()
         self.computeMapping(position)
         self.H = self.H.tocsr()
 
+    # Interpolate recvData and return the result
+
+    @tb.compute_time
+    def interpData(self,recvData):
+        return self.H.dot(recvData)
+
 # %% Mapping Matrix from RecvPos to Position
 
     @tb.compute_time
-    def computeMapping(self,pos):
+    def computeMapping(self,position):
 
-        if self.K == 1: self.search(pos)
-        else: self.interpolate(pos)
+        size = tb.solver.nbrNod,len(self.recvPos)
+        self.H = sp.dok_matrix(size)
 
-    # Nearest neighbour search if one neighbour
+        if self.K == 1: self.search(position)
+        else: self.interpolate(position)
 
+# %% Find the K Nearest Neighbours
+ 
     def search(self,position):
 
         for i,pos in enumerate(position):
@@ -32,8 +44,6 @@ class KNN(Interpolator):
             dist = np.linalg.norm(pos-self.recvPos,axis=1)
             self.H[i,np.argmin(dist)] = 1
 
-# %% Interpolate from the K nearest neighbours
- 
     def interpolate(self,position):
 
         for i,pos in enumerate(position):

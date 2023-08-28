@@ -1,6 +1,5 @@
 from mpi4py.MPI import COMM_WORLD as CW
 from ..general import Toolbox as tb
-from scipy import sparse as sp
 import numpy as np
 
 # %% Parent Interpolator Class
@@ -8,24 +7,33 @@ import numpy as np
 class Interpolator(object):
     def __init__(self):
 
+        self.initializeData()
+
         # Share the position vectors between solvers
 
         if CW.rank == 0:
 
             self.recvPos = CW.recv(source=1,tag=1)
             CW.send(tb.solver.getPosition(),1,tag=2)
-            self.recvNode = self.recvPos.shape[0]
 
         if CW.rank == 1:
 
             CW.send(tb.solver.getPosition(),0,tag=1)
             self.recvPos = CW.recv(source=0,tag=2)
-            self.recvNode = self.recvPos.shape[0]
 
-        # Initialize the interpolation matrix
+# %% Initialize the Interpolation Data
+    
+    @tb.only_solid
+    def initializeData(self):
 
-        self.nbrNode = tb.solver.nbrNode
-        self.H = sp.dok_matrix((self.nbrNode,self.recvNode))
+        if tb.convMech: self.pos = tb.solver.getPosition()
+        if tb.convTher: self.temp = tb.solver.getTemperature()
+
+    def initialize(self):
+        raise Exception('No initialize function defined')
+    
+    def interpData(self):
+        raise Exception('No interpolation function defined')
 
 # %% Facets from the Target Interface Mesh
 
@@ -33,25 +41,13 @@ class Interpolator(object):
 
         if CW.rank == 0:
             
-            CW.send(tb.solver.getFace(),1,tag=7)
+            CW.send(tb.solver.getFacet(),1,tag=7)
             self.recvFace = CW.recv(source=1,tag=8)
 
         if CW.rank == 1:
 
             self.recvFace = CW.recv(source=0,tag=7)
-            CW.send(tb.solver.getFace(),0,tag=8)
-
-# %% Interpolate RecvData and Return the Result
-
-    @tb.compute_time
-    def interpData(self,recvData):
-        return self.H.dot(recvData)
-    
-    @tb.only_solid
-    def initialize(self):
-
-        if tb.convMech: self.pos = tb.solver.getPosition()
-        if tb.convTher: self.temp = tb.solver.getTemperature()
+            CW.send(tb.solver.getFacet(),0,tag=8)
 
 # %% Apply Actual Loading on Solid
 
@@ -64,7 +60,7 @@ class Interpolator(object):
             load = CW.recv(source=0,tag=3)
             tb.solver.applyLoading(self.interpData(load))
 
-# Apply predicted displacement on fluid
+    # Apply predicted displacement on fluid
 
     @tb.conv_mecha
     def applyDispSF(self):
@@ -75,7 +71,7 @@ class Interpolator(object):
             pos = CW.recv(source=1,tag=4)
             tb.solver.applyPosition(self.interpData(pos))
 
-# Apply actual heat flux on solid
+    # Apply actual heat flux on solid
 
     @tb.conv_therm
     def applyHeatFS(self):
@@ -86,7 +82,7 @@ class Interpolator(object):
             heat = CW.recv(source=0,tag=5)
             tb.solver.applyHeatFlux(self.interpData(heat))
 
-# Apply predicted temperature on fluid
+    # Apply predicted temperature on fluid
 
     @tb.conv_therm
     def applyTempSF(self):

@@ -1,31 +1,41 @@
 from .Interpolator import Interpolator
 from ..general import Toolbox as tb
-from ..general import Element as el
+from scipy import sparse as sp
 import numpy as np
 
-# %% Mesh Interpolation with Element Transfer Method
+# %% Mesh Interpolation Element Transfer Method
 
 class ETM(Interpolator):
     def __init__(self,K):
-        Interpolator.__init__(self)
-
-        # Share the facet vectors between solvers
-
-        self.getFaceList()
         self.K = int(abs(K))
+
+    # Compute the FS mesh interpolation matrix
+
+    def initialize(self):
+
+        Interpolator.__init__(self)
         position = tb.solver.getPosition()
-
-        # Compute the FS mesh interpolation matrix
-
         self.computeMapping(position)
         self.H = self.H.tocsr()
+
+    # Interpolate recvData and return the result
+
+    @tb.compute_time
+    def interpData(self,recvData):
+        return self.H.dot(recvData)
 
 # %% Mapping Matrix from RecvPos to Position
 
     @tb.compute_time
     def computeMapping(self,position):
 
-        elem = el.getElement(np.size(self.recvFace,1))
+        size = tb.solver.nbrNod,len(self.recvPos)
+        self.H = sp.dok_matrix(size)
+
+        # Loop on the node positions in reference mesh
+
+        self.getFaceList()
+        elem = tb.getElement(np.size(self.recvFace,1))
         faceList = self.getCloseFace(position)
 
         # Loop on the node positions in reference mesh
@@ -51,7 +61,7 @@ class ETM(Interpolator):
 
     def getCloseFace(self,position):
         
-        result = np.zeros((self.nbrNode,self.K),int)
+        result = np.zeros((tb.solver.nbrNod,self.K),int)
         facePos = np.mean(self.recvPos[self.recvFace],axis=1)
 
         for i,pos in enumerate(position):
